@@ -5,7 +5,7 @@ import {
 import Comment from "../model/comment";
 import Game from "../model/game";
 
-export function getCommentsByGame(req, res) {
+export async function getCommentsByGame(req, res) {
   const { gameId } = req.params;
 
   if (!Game.isExist(gameId)) {
@@ -24,7 +24,7 @@ export function getCommentsByGame(req, res) {
     new SuccessCustomResponse(
       200,
       "Comments list received.",
-      Comment.allByGame(gameId)
+      await Comment.allByGame(gameId)
     )
   );
 }

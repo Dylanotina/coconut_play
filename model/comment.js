@@ -1,34 +1,34 @@
-//import generator from "./gameGenerator"
+import commentModel from "../database/commentSchema";
 
-// Array provide comment objects
-// these one are build as :
-// {id, gameId, username, email, text, createdDate}
-let list = [];
-
-const all = () => {
-  return list;
+const all = async () => {
+  const response = await commentModel.find();
+  return response;
 };
 
-const allByGame = (gameId) => {
-  return list.filter((x) => x.gameId === gameId);
+const allByGame = async (gameId) => {
+  const response = await commentModel.find({ gameId: gameId });
+  return response;
 };
 
-const count = () => {
-  return list.length;
+const count = async () => {
+  await commentModel.count({}, (err, result) => {
+    if (err) {
+      return err;
+    } else {
+      return result;
+    }
+  });
 };
 
-const create = ({ gameId, username, email, text }) => {
-  const comment = {
-    id: count(),
-    gameId,
-    username: username || "Default Username",
-    email: email || "default@default.com",
-    text: text || "Default comment",
+const create = async ({ gameId, username, email, text }) => {
+  let doc = new commentModel({
+    gameId: gameId,
+    username: username,
+    email: email,
+    text: text,
     createdDate: new Date(),
-  };
-
-  list.push(comment);
-  return allByGame(gameId);
+  });
+  await doc.save();
 };
 
 export default {

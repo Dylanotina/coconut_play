@@ -1,6 +1,6 @@
-# Pitaya Play API
+# Coconut Play API
 
-Exercice pratique du cours 8
+OTINA Dylan Code permanent : OTID17029902
 
 ### Installation
 

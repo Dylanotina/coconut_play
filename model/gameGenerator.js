@@ -27,70 +27,73 @@ const defaultContent = `<p>Lorem ipsum dolor sit amet, consectetur adipiscing el
 <p>Nullam accumsan mattis ipsum, ac ultrices ligula dapibus ac. Pellentesque arcu eros, finibus vitae sapien in, dictum interdum diam. Nulla condimentum pretium luctus. Quisque vel tortor mattis arcu bibendum posuere quis venenatis mi. Aenean finibus tincidunt lorem nec elementum. Phasellus vitae velit quis tortor laoreet lacinia. Suspendisse ullamcorper turpis id nunc placerat auctor. Praesent congue nec tortor id viverra. In faucibus efficitur justo, id sagittis odio vulputate non. Sed sed urna sit amet urna posuere viverra interdum ut lectus.</p>`;
 
 const authors = [
-  'Yoann Dijoux',
-  'Kylick Jorhel',
-  'Atsuki Tatsu',
-  'Tsumi Nobunoki',
+  "Dylan Otina",
+  "Nicolas Boisseau",
+  "Nathan Otina",
+  "Jean-Jacques Agbovi",
 ];
 
 let banners = [];
 
 const titles = [
-  'Borderlands 3 - Quand amour est synonyme de flingues à tentacules',
-  'Yes, Your Grace - Le roi dans sa narration',
-  'Paper Beast - Le VR contemplatif parsemmé de reflexion',
-  'Saints Row Re-Elected - Vous avez dit switch ?',
-  "13 Sentinels Aegis Rim - Le sci fi d'Osaka",
-  'Granblue Fantasy Versus - Du tekken moderne !',
-  'Teamfight Tactics - Mobilité intelligente',
-  "My Hero One's Justice 2 - Le service à l'ordre du fan",
-  'Animal Crossing New Horizons - Le meilleur des enfers',
-  'Persona 5 Royal - Le J-RPG dans sa forme la plus exquise !',
-  'Doom Eternal - Reflexe et survie',
-  'Offworld Trading Company - Le capitalisme marsien',
+  "NBA 2K : Toujours le meilleur",
+  "Fifa : Copie à revoir",
+  "COD : jouissif comme d'habitude",
+  "Battlefield : un concurrent serieux",
+  "WOW : passable",
+  "Football manager : La stratégie avant tout",
+  "F1 2019 : On attend la sortie",
+  "Mario Kart : la base pour vos soirées de famille",
+  "Pokemon emeraude : la nostalgie frappe",
+  "Pourquoi je déconseille LOL",
+  "Need for Speed Most Wanted : Toujours plus vite",
+  "Madden NFL 2020 : la violance à l'état pur",
 ];
 
 const names = [
-  'Borderlands 3',
-  'Yes, Your Grace',
-  'Paper Beast',
-  'Saints Row Re-Elected',
-  "13 Sentinels Aegis Rim",
-  'Granblue Fantasy Versus',
-  'Teamfight Tactics',
-  "My Hero One's Justice 2",
-  'Animal Crossing New Horizons',
-  'Persona 5 Royal',
-  'Doom Eternal',
-  'Offworld Trading Company',
-]
+  "NBA 2K",
+  "FIFA",
+  "COD",
+  "Battlefield",
+  "WOW",
+  "Football Manager",
+  "F1 2019",
+  "Mario Kart",
+  "Pokemon emeraude",
+  "LOL",
+  "Need for Speed Most Wanted",
+  "Madden NFL 2020",
+];
 
 const config = {
   generation: {
     rpg: 2,
     fps: 4,
     mmo: 3,
-    rts: 3
-  }
-}
+    rts: 3,
+  },
+};
 
+const statuts = ["public", "private"];
 let tempGames = [];
 
 const fixIndex = (index, max) => index % max;
 
-const getAuthor = index => authors[fixIndex(index, authors.length)];
+const getAuthor = (index) => authors[fixIndex(index, authors.length)];
 
-const getBanner = index => banners[fixIndex(index, banners.length)];
+const getBanner = (index) => banners[fixIndex(index, banners.length)];
 
-const getTitle = index => titles[fixIndex(index, titles.length)];
+const getTitle = (index) => titles[fixIndex(index, titles.length)];
 
-const getName = index => names[fixIndex(index, names.length)];
+const getName = (index) => names[fixIndex(index, names.length)];
 
 const getGrade = () => {
   return Math.floor(Math.random() * Math.floor(100));
-}
+};
 
-const get = id => ({
+const getStatut = (index) => statuts[fixIndex(index, statuts.length)];
+
+const get = (id) => ({
   id,
   title: getTitle(id),
   author: getAuthor(id),
@@ -99,32 +102,33 @@ const get = id => ({
   grade: getGrade(),
   category: null,
   content: defaultContent,
+  statut: getStatut(id),
   createdDate: new Date(`December ${fixIndex(id + 1, 30)}, 2019 12:00:00`),
 });
 
 const getList = (count, category) => {
   const games = [];
   const idGenerated = tempGames.length;
-  const max = idGenerated + count
+  const max = idGenerated + count;
   for (let i = idGenerated; i < max; i += 1) {
     const game = get(i);
-    game.category = category
+    game.category = category;
     games.push(game);
   }
 
-  return games
+  return games;
 };
 
 const generateImages = async () => {
   let response = {};
   try {
     response = await Axios.get("https://picsum.photos/v2/list");
-  } catch(e) {
-    throw "ERROR - get picsum image list"
+  } catch (e) {
+    throw "ERROR - get picsum image list";
   }
 
   banners = response.data;
-  banners.map(x => {
+  banners.map((x) => {
     const urlParts = x.download_url.split("/");
     const width = 800;
     const height = 600;
@@ -133,25 +137,27 @@ const generateImages = async () => {
     x.download_url = `${urlParts.join("/")}/${width}/${height}.jpg`;
     return x;
   });
-}
+};
 
 const generateGames = () => {
   for (const category in config.generation) {
     const GameToGenerateCount = config.generation[category];
-    tempGames = [...tempGames, ...getList(GameToGenerateCount, category)]
+    tempGames = [...tempGames, ...getList(GameToGenerateCount, category)];
   }
 
-  return tempGames.sort((item1, item2) => item1.createdDate - item2.createdDate);
-}
+  return tempGames.sort(
+    (item1, item2) => item1.createdDate - item2.createdDate
+  );
+};
 
 const generate = async () => {
   await generateImages();
   return generateGames();
-}
+};
 
 const gameGenerator = {
   generate,
-  getDefaultImageUrl: (index) => getBanner(index)
+  getDefaultImageUrl: (index) => getBanner(index),
 };
 
 export default gameGenerator;
