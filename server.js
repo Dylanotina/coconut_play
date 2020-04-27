@@ -4,6 +4,7 @@ import cors from "cors";
 import routes from "./router.js";
 import config from "./config/configDb";
 import dotenv from "dotenv";
+import { generate } from "./lib/generator";
 
 const app = express();
 const PORT = 3000;
@@ -26,5 +27,10 @@ app.use((req, res) => {
 });
 
 config();
+
+/*generate().then(() => {
+  app.listen(PORT, () => console.log(`Node server running on ${PORT}!`));
+});
+*/
 
 app.listen(PORT, () => console.log(`Node server running on ${PORT}!`));
