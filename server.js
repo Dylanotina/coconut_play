@@ -13,17 +13,27 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 dotenv.config();
-//Root route to test the API status
-app.get("/", (req, res) => {
-  res.send("Server is listening...");
-});
 
 //Inject the different routes availables
 routes(app);
 
-// If the route doesn't exist, send 404 error
-app.use((req, res) => {
-  res.status(404).send({ url: `${req.originalUrl} not found` });
+//Routes in production mode
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(__dirname + "/public/"));
+
+  app.get(/.*/, (req, res) => {
+    res.sendFile(__dirname + "/public/index.html");
+  });
+
+  // If the route doesn't exist, send 404 error
+  app.use((req, res) => {
+    res.status(404).send({ url: `${req.originalUrl} not found` });
+  });
+}
+
+//Root route to test the API status
+app.get("/", (req, res) => {
+  res.send("Server is listening...");
 });
 
 config();
@@ -33,4 +43,6 @@ config();
 });
 */
 
-app.listen(PORT, () => console.log(`Node server running on ${PORT}!`));
+app.listen(PORT, () =>
+  console.log(`Node server running on ${PORT} in ${process.env.NODE_ENV} mode!`)
+);
